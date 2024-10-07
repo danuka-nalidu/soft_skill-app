@@ -30,9 +30,12 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-
-# Symbolication related
-app.*.symbols
+/coverage/
+/android/
+ios/Flutter/Flutter.framework/
+ios/Flutter/Flutter.podspec
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
 
 # Obfuscation related
 app.*.map.json
@@ -41,3 +44,33 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# iOS related files
+ios/Pods/
+ios/Runner.xcworkspace/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+
+# JetBrains related
+*.idea/
+.idea/modules.xml
+.idea/.name
+.idea/workspace.xml
+.idea/libraries
+.idea/shelf
+.idea/workspace.xml
+
+# Android related
+.android/
+build/
+gradle/
+/android/.gradle/
+/android/captures/
+/android/gradlew
+/android/gradlew.bat
+/android/local.properties
+/android/app/*.iml
+
+# Package and lock files
+.packages
+pubspec.lock
