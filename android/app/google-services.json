@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "226964434655",
+    "project_id": "uee-project-new",
+    "storage_bucket": "uee-project-new.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:226964434655:android:3f65e71407e17485bc836a",
+        "android_client_info": {
+          "package_name": "com.example.uee_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6CKXTFu7vH2FDkHxgY91Tes6joq_3jtw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
