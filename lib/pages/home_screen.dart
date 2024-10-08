@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:uee_project/pages/profile.dart';
 import 'package:uee_project/pages/skill_detail_screen.dart';
 import 'package:uee_project/widget/banner.dart';
 import 'package:uee_project/widget/my_icon_button.dart';
@@ -292,7 +293,13 @@ class _HomeScreenState extends State<HomeScreen> {
         const Spacer(),
         MyIconButton(
           icon: Iconsax.user,
-          pressed: () {},
+          pressed: () {
+            // Use Navigator.push to navigate to the ProfilePage
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfilePage()),
+            );
+          },
         )
       ],
     );
