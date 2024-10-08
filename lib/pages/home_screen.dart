@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:uee_project/pages/skill_detail_screen.dart';
 import 'package:uee_project/widget/banner.dart';
 import 'package:uee_project/widget/my_icon_button.dart';
 
@@ -181,7 +182,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 final DocumentSnapshot documentSnapshot =
                                     snapshotData.data!.docs[index];
                                 return GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SkillDetailScreen(
+                                          documentSnapshot: documentSnapshot,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                   child: Material(
                                     elevation: 3,
                                     borderRadius: BorderRadius.circular(10),
@@ -222,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               documentSnapshot['coursecount']
                                                       .toString() +
                                                   " courses", // Appending "courses" to coursecount
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16,
                                                 color: Colors
@@ -232,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             const SizedBox(width: 8),
                                             // Small round button with white arrow and blue background
                                             Container(
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 color: kprimaryColor,
                                               ),

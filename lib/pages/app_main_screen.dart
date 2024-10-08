@@ -3,7 +3,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:uee_project/pages/home_screen.dart';
 
 // Define the primary color constant
-const kprimaryColor = Color(0xff568A9F);
+const kprimaryColor = Colors.blue;
 
 class AppMainScreen extends StatefulWidget {
   const AppMainScreen({super.key});
