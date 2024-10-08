@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:uee_project/pages/app_main_screen.dart';
 import 'package:uee_project/widget/banner.dart';
 import 'package:uee_project/widget/my_icon_button.dart';
 
@@ -18,7 +17,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String category = 'All'; // The default selected category is "All"
   final CollectionReference categoriesItems =
-      FirebaseFirestore.instance.collection('Categories');
+      FirebaseFirestore.instance.collection("Categories");
+  final CollectionReference skillItems = FirebaseFirestore.instance
+      .collection("SoftSkills"); //collection for skills section
 
   @override
   Widget build(BuildContext context) {
@@ -145,19 +146,118 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                     ),
-                    //Start from here
                     const Padding(
                       padding: EdgeInsets.symmetric(
                         vertical: 20,
                       ),
                       child: Text(
-                        "Populer Skills",
+                        "Popular Skills",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
+
+                    // For skills
+                    StreamBuilder(
+                      stream: skillItems.snapshots(),
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshotData) {
+                        if (snapshotData.hasData) {
+                          return SizedBox(
+                            height:
+                                400, // You can also adjust the height as needed
+                            child: GridView.builder(
+                              itemCount: snapshotData.data!.docs.length,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                childAspectRatio: 0.79,
+                              ),
+                              itemBuilder: (context, index) {
+                                final DocumentSnapshot documentSnapshot =
+                                    snapshotData.data!.docs[index];
+                                return GestureDetector(
+                                  onTap: () {},
+                                  child: Material(
+                                    elevation: 3,
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 160,
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            image: DecorationImage(
+                                              image: NetworkImage(
+                                                documentSnapshot['imageurl'],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          documentSnapshot['name'],
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 5, // Reduced space
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              documentSnapshot['coursecount']
+                                                      .toString() +
+                                                  " courses", // Appending "courses" to coursecount
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                color: Colors
+                                                    .grey, // Light grey color for course count
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            // Small round button with white arrow and blue background
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: kprimaryColor,
+                                              ),
+                                              padding: const EdgeInsets.all(6),
+                                              child: const Icon(
+                                                Icons.arrow_forward_ios,
+                                                size: 12,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        }
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    )
                   ],
                 ),
               ),
