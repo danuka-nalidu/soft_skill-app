@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uee_project/pages/logout.dart'; // Import the logout page
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -13,13 +14,6 @@ class _ProfilePageState extends State<ProfilePage> {
         title: Text('My Profile'),
         backgroundColor: Colors.white,
         centerTitle: true,
-        // leading: Icon(Icons.arrow_back),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.menu),
-        //     onPressed: () {},
-        //   ),
-        // ],
       ),
       body: ListView(
         padding: EdgeInsets.all(16.0),
@@ -203,7 +197,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       style: TextStyle(color: Colors.red),
                     ),
                     onTap: () {
-                      // Handle logout
+                      // Navigate to Logout screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const Logout(), // Use the existing Logout class
+                        ),
+                      );
                     },
                   ),
                 ],

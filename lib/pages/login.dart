@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uee_project/pages/app_main_screen.dart';
 import 'package:uee_project/pages/forgot_password.dart';
 import 'package:uee_project/pages/logout.dart';
 import 'package:uee_project/pages/sign_up.dart';
@@ -44,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // Navigate when login is successful
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const Logout(),
+          builder: (context) => const AppMainScreen(),
         ),
       );
     } else {

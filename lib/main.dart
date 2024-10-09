@@ -1,7 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth package
-// import 'package:uee_project/pages/login.dart';
+import 'package:uee_project/pages/home_screen.dart';
+import 'package:uee_project/pages/login.dart';
 import 'pages/app_main_screen.dart';
 
 void main() async {
@@ -21,12 +22,13 @@ class MyApp extends StatelessWidget {
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          // if (snapshot.hasData) {
-          //   return const HomeScreen();
-          // } else {
-          //   return const LoginScreen();
-          // }
-          return const AppMainScreen();
+          if (snapshot.hasData) {
+            return const HomeScreen();
+            // return const AppMainScreen();
+          } else {
+            return const LoginScreen();
+          }
+          // return const AppMainScreen();
         },
       ),
     );
