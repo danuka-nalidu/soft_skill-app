@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:uee_project/pages/edit_details.dart';
 import 'package:uee_project/pages/logout.dart'; // Import the logout page
+import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
+import 'package:uee_project/services/authentication.dart'; // Import AuthServices
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -7,48 +10,88 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  String userName = ''; // Variable to store the user's name
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserName(); // Fetch the user's name when the page initializes
+  }
+
+  void fetchUserName() async {
+    String? uid =
+        FirebaseAuth.instance.currentUser?.uid; // Get the current user's UID
+    if (uid != null) {
+      Map<String, dynamic>? userData = await AuthServices().getUserData(uid);
+      if (mounted) {
+        setState(() {
+          userName = userData?['name'] ?? ''; // Set the user's name
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('My Profile'),
-        backgroundColor: Colors.white,
+        titleTextStyle: TextStyle(
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25),
+        backgroundColor: Colors.blue, // Set the app bar color to blue
         centerTitle: true,
       ),
       body: ListView(
-        padding: EdgeInsets.all(16.0),
+        // padding: EdgeInsets.all(16.0),
         children: [
           // Profile Section
           Container(
             padding: EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+              color: Colors.blue, // Set the background color
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
             ),
-            child: Column(
-              children: [
-                // Using the provided image path for the avatar
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage:
-                      AssetImage('images/avatar.png'), // Image path updated
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'John Doe',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+            child: Padding(
+              padding:
+                  const EdgeInsets.only(left: 20.0), // Add left padding here
+              child: Row(
+                children: [
+                  // Using the provided image path for the avatar
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundImage:
+                        AssetImage('images/avatar.png'), // Image path updated
                   ),
-                ),
-                SizedBox(height: 10),
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    // Handle profile editing
-                  },
-                ),
-              ],
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      userName, // Use the fetched user's name here
+                      style: TextStyle(
+                        fontSize: 22, // Adjust font size
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white, // Change text color to white
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 15.0),
+                    child: IconButton(
+                      icon: Icon(Icons.edit,
+                          color: Colors.white), // Edit icon color
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditDetailsPage()),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           SizedBox(height: 20),
@@ -62,7 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Text(
                     '2+ hours',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20, // Adjust font size
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -75,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Text(
                     '20',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20, // Adjust font size
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -85,6 +128,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
           SizedBox(height: 20),
+          Divider(color: Colors.grey), // Add divider
 
           // Dashboard Section
           Card(

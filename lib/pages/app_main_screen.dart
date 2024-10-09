@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:uee_project/pages/home_screen.dart';
 
+import 'profile.dart';
+
 // Define the primary color constant
 const kprimaryColor = Colors.blue;
 
@@ -115,7 +117,8 @@ class _AppMainScreenState extends State<AppMainScreen> {
       case 3:
         return navbarPage(Iconsax.notification5);
       case 4:
-        return navbarPage(Iconsax.profile_2user5);
+        // return navbarPage(Iconsax.profile_2user5);
+        return ProfilePage();
       default:
         return navbarPage(Iconsax.home5);
     }

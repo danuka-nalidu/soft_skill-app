@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:uee_project/pages/profile.dart';
 import 'package:uee_project/pages/skill_detail_screen.dart';
+import 'package:uee_project/services/authentication.dart'; // Import AuthServices
 import 'package:uee_project/widget/banner.dart';
 import 'package:uee_project/widget/my_icon_button.dart';
 
@@ -21,7 +23,29 @@ class _HomeScreenState extends State<HomeScreen> {
   final CollectionReference categoriesItems =
       FirebaseFirestore.instance.collection("Categories");
   final CollectionReference skillItems = FirebaseFirestore.instance
-      .collection("SoftSkills"); //collection for skills section
+      .collection("SoftSkills"); // collection for skills section
+
+  String userName = ''; // Variable to store the user's name
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserName(); // Fetch the user's name when the screen initializes
+  }
+
+  void fetchUserName() async {
+    String? uid =
+        FirebaseAuth.instance.currentUser?.uid; // Get the current user's UID
+    if (uid != null) {
+      Map<String, dynamic>? userData = await AuthServices().getUserData(uid);
+      if (mounted) {
+        // Check if the widget is still in the tree
+        setState(() {
+          userName = userData?['name'] ?? ''; // Set the user's name
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    //for banner
+                    // for banner
                     const BannerToExplore(),
                     const Padding(
                       padding: EdgeInsets.symmetric(
@@ -282,9 +306,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Row headerParts() {
     return Row(
       children: [
-        const Text(
-          "Hello, John Doe",
-          style: TextStyle(
+        Text(
+          "Hello, $userName", // Use the fetched user name here
+          style: const TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
             height: 1,

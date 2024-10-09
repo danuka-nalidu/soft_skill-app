@@ -61,4 +61,15 @@ class AuthServices {
   Future<void> signOut() async {
     await _auth.signOut();
   }
+
+  // Add this method to your AuthServices class
+Future<Map<String, dynamic>?> getUserData(String uid) async {
+  try {
+    DocumentSnapshot doc = await _firestore.collection("users").doc(uid).get();
+    return doc.data() as Map<String, dynamic>?; // Return user data
+  } catch (e) {
+    print("Error fetching user data: $e");
+    return null; // Return null if there's an error
+  }
+}
 }
