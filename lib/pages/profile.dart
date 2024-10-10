@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:uee_project/pages/edit_details.dart';
+import 'package:uee_project/pages/edit_profile.dart';
 import 'package:uee_project/pages/logout.dart'; // Import the logout page
 import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
 import 'package:uee_project/services/authentication.dart';
