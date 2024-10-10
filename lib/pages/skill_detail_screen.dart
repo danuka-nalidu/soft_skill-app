@@ -70,7 +70,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                     // Participants section
                     Column(
                       children: [
-                        Icon(Icons.people,
+                        const Icon(Icons.people,
                             color: Colors.black54,
                             size: 40), // Increased icon size
                         const SizedBox(height: 5),
@@ -145,13 +145,13 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                       color: Colors.grey, // Vertical divider line
                     ),
                     // More options section
-                    Column(
+                    const Column(
                       children: [
                         Icon(Icons.more_vert,
                             color: Colors.black54,
                             size: 40), // Increased icon size
-                        const SizedBox(height: 5),
-                        const Text(
+                        SizedBox(height: 5),
+                        Text(
                           "More",
                           style: TextStyle(fontSize: 14),
                         ),
@@ -173,9 +173,9 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                 const SizedBox(height: 20),
 
                 // Static "Courses" section title
-                Text(
+                const Text(
                   "Courses",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
                   ),
