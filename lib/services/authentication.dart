@@ -2,31 +2,33 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthServices {
-  //for storing data in cloud firestore
+  // For storing data in cloud firestore
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  //for authentication
+  // For authentication
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-//For signup
-  Future<String> signUpUser(
-      {required String email,
-      required String password,
-      required String name}) async {
-    String res = " Some error occured";
+  // For signup
+  Future<String> signUpUser({
+    required String email,
+    required String password,
+    required String name,
+    required String role, // Accept role as a parameter
+  }) async {
+    String res = "Some error occurred";
     try {
       if (email.isNotEmpty || password.isNotEmpty || name.isNotEmpty) {
-        //Register user in firebase auth
+        // Register user in firebase auth
         UserCredential credential = await _auth.createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
-        //Adding user to cloud firestore
+        // Adding user to cloud firestore
         await _firestore.collection("users").doc(credential.user!.uid).set({
           "name": name,
           "email": email,
           "uid": credential.user!.uid,
-          //cant store password in cloud firestore
+          "role": role, // Save the selected role in Firestore
         });
         res = "success";
       }
@@ -36,20 +38,20 @@ class AuthServices {
     return res;
   }
 
-  //For login scree
+  // For login
   Future<String> loginUser({
     required String email,
     required String password,
   }) async {
-    String res = "Some error occured";
+    String res = "Some error occurred";
     try {
       if (email.isNotEmpty || password.isNotEmpty) {
-        //Login user in firebase auth email and password
+        // Login user in firebase auth email and password
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
         res = "success";
       } else {
-        res = "Please enter eall the fields";
+        res = "Please enter all the fields";
       }
     } catch (e) {
       return e.toString();
@@ -57,19 +59,26 @@ class AuthServices {
     return res;
   }
 
-  //For logout
+  // Get current user ID
+  Future<String?> getCurrentUserId() async {
+    User? user = _auth.currentUser;
+    return user?.uid;
+  }
+
+  // Fetch user data
+  Future<Map<String, dynamic>?> getUserData(String uid) async {
+    try {
+      DocumentSnapshot doc =
+          await _firestore.collection("users").doc(uid).get();
+      return doc.data() as Map<String, dynamic>?; // Return user data
+    } catch (e) {
+      print("Error fetching user data: $e");
+      return null;
+    }
+  }
+
+  // For logout
   Future<void> signOut() async {
     await _auth.signOut();
   }
-
-  // Add this method to your AuthServices class
-Future<Map<String, dynamic>?> getUserData(String uid) async {
-  try {
-    DocumentSnapshot doc = await _firestore.collection("users").doc(uid).get();
-    return doc.data() as Map<String, dynamic>?; // Return user data
-  } catch (e) {
-    print("Error fetching user data: $e");
-    return null; // Return null if there's an error
-  }
-}
 }

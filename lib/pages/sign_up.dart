@@ -17,6 +17,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
+
+  // Dropdown for selecting user role
+  String selectedRole = 'user'; // Default role
+  List<String> roles = ['user', 'admin']; // Available roles
+
   bool isLoading = false;
 
   @override
@@ -28,11 +33,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
+  // Method to handle user sign-up
   void signUpUser() async {
     String res = await AuthServices().signUpUser(
       email: emailController.text,
       password: passwordController.text,
       name: nameController.text,
+      role: selectedRole, // Send the selected role
     );
 
     if (res == "success") {
@@ -109,6 +116,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       icon: Icons.lock,
                     ),
                     const SizedBox(height: 15), // Reduced spacing before button
+
+                    // Dropdown for selecting role
+                    DropdownButtonFormField<String>(
+                      value: selectedRole,
+                      decoration: InputDecoration(
+                        labelText: 'Select Role',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      items: roles.map((String role) {
+                        return DropdownMenuItem<String>(
+                          value: role,
+                          child: Text(role),
+                        );
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          selectedRole = value!;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 15), // Spacing before button
                     MyButton(
                         onTab: signUpUser,
                         text: isLoading ? "Signing Up..." : "Sign Up"),

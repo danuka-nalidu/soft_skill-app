@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:uee_project/pages/app_main_screen.dart';
+import 'package:uee_project/pages/app_main_screen.dart'; // For regular users
+import 'package:uee_project/pages/admin_profile.dart'; // For admins
 import 'package:uee_project/pages/forgot_password.dart';
-import 'package:uee_project/pages/logout.dart';
 import 'package:uee_project/pages/sign_up.dart';
+import 'package:uee_project/services/authentication.dart';
 import 'package:uee_project/widget/button.dart';
+import 'package:uee_project/widget/snack_bar.dart';
 import 'package:uee_project/widget/text_field.dart';
-import '../services/authentication.dart';
-import '../widget/snack_bar.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -42,12 +42,28 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (res == "success") {
-      // Navigate when login is successful
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const AppMainScreen(),
-        ),
-      );
+      // Fetch the user's role after logging in
+      String? uid = await AuthServices().getCurrentUserId();
+      if (uid != null) {
+        // Fetch role from Firestore
+        Map<String, dynamic>? userData = await AuthServices().getUserData(uid);
+        String role = userData?['role'] ?? 'user'; // Default to 'user'
+
+        // Navigate based on the user's role
+        if (role == 'admin') {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => AdminProfile(),
+            ),
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const AppMainScreen(),
+            ),
+          );
+        }
+      }
     } else {
       // Stop loading and show error message
       setState(() {

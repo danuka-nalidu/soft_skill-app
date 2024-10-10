@@ -4,28 +4,30 @@ import 'package:uee_project/pages/logout.dart'; // Import the logout page
 import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
 import 'package:uee_project/services/authentication.dart';
 
-class ProfilePage extends StatefulWidget {
+import 'add_skill.dart'; // Import AuthServices
+
+class AdminProfile extends StatefulWidget {
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _AdminProfileState createState() => _AdminProfileState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  String userName = ''; // Variable to store the user's name
+class _AdminProfileState extends State<AdminProfile> {
+  String userName = ''; // Variable to store the admin's name
 
   @override
   void initState() {
     super.initState();
-    fetchUserName(); // Fetch the user's name when the page initializes
+    fetchUserName(); // Fetch the admin's name when the page initializes
   }
 
   void fetchUserName() async {
     String? uid =
-        FirebaseAuth.instance.currentUser?.uid; // Get the current user's UID
+        FirebaseAuth.instance.currentUser?.uid; // Get the current admin's UID
     if (uid != null) {
       Map<String, dynamic>? userData = await AuthServices().getUserData(uid);
       if (mounted) {
         setState(() {
-          userName = userData?['name'] ?? ''; // Set the user's name
+          userName = userData?['name'] ?? ''; // Set the admin's name
         });
       }
     }
@@ -35,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Profile'),
+        title: Text('Admin Profile'),
         titleTextStyle: TextStyle(
             color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25),
         backgroundColor: Colors.blue, // Set the app bar color to blue
@@ -66,7 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      userName, // Use the fetched user's name here
+                      userName, // Use the fetched admin's name here
                       style: TextStyle(
                         fontSize: 22, // Adjust font size
                         fontWeight: FontWeight.w500,
@@ -94,41 +96,9 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           SizedBox(height: 20),
 
-          // Learning Stats
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Column(
-                children: [
-                  Text(
-                    '2+ hours',
-                    style: TextStyle(
-                      fontSize: 20, // Adjust font size
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text('Total Learn'),
-                ],
-              ),
-              Container(width: 1, height: 30, color: Colors.grey),
-              Column(
-                children: [
-                  Text(
-                    '20',
-                    style: TextStyle(
-                      fontSize: 20, // Adjust font size
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text('Skills Gained'),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: 20),
           Divider(color: Colors.grey), // Add divider
 
-          // Dashboard Section
+          // Admin Dashboard Section
           Card(
             elevation: 3,
             child: Padding(
@@ -137,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Dashboard',
+                    'Admin Panel',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -148,32 +118,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     leading: Icon(Icons.settings, color: Colors.blue),
                     title: Text('Settings'),
                     trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {},
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.card_membership, color: Colors.yellow),
-                    title: Text('Skills and certifications'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(6.0),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            '2 New',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 5),
-                        Icon(Icons.arrow_forward_ios),
-                      ],
-                    ),
                     onTap: () {},
                   ),
                   ListTile(
@@ -208,7 +152,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           SizedBox(height: 20),
 
-          // Account Section
+          // Account Section (for admin)
           Card(
             elevation: 3,
             child: Padding(
@@ -222,6 +166,19 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Add skill',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                    onTap: () {
+                      // Navigate to AddSkillForm when tapped
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AddSkillForm()),
+                      );
+                    },
                   ),
                   ListTile(
                     title: Text(

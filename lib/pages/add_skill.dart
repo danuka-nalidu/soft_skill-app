@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:uee_project/pages/admin_profile.dart';
 import 'package:uee_project/pages/home_screen.dart';
 
 class AddSkillForm extends StatefulWidget {
@@ -75,7 +76,7 @@ class _AddSkillFormState extends State<AddSkillForm> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => HomeScreen()), // Existing HomeScreen
+                  builder: (context) => AdminProfile()), // Existing HomeScreen
             );
           }).catchError((error) {
             Fluttertoast.showToast(
