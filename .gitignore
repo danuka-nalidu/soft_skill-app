@@ -31,16 +31,11 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+/flutter/ephemeral/
+
+# Android related
 /android/
-ios/Flutter/Flutter.framework/
-ios/Flutter/Flutter.podspec
-ios/ServiceDefinitions.json
-ios/Runner/GeneratedPluginRegistrant.*
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
+/android/.gradle/
 /android/app/debug
 /android/app/profile
 /android/app/release
@@ -50,9 +45,27 @@ ios/Pods/
 ios/Runner.xcworkspace/
 ios/Flutter/App.framework
 ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+
+# macOS related files
+macos/Flutter/GeneratedPluginRegistrant.*
+macos/Flutter/ephemeral/
+
+# Windows related files
+windows/flutter/GeneratedPluginRegistrant.*
+windows/flutter/ephemeral/
+
+# Linux related files
+linux/flutter/GeneratedPluginRegistrant.*
+linux/flutter/ephemeral/
+
+# Obfuscation related
+app.*.map.json
 
 # JetBrains related
-*.idea/
+.idea/
 .idea/modules.xml
 .idea/.name
 .idea/workspace.xml
@@ -73,4 +86,7 @@ gradle/
 
 # Package and lock files
 .packages
-pubspec.lock
+
+# Ensure these important files are tracked (not ignored)
+!pubspec.yaml
+!pubspec.lock

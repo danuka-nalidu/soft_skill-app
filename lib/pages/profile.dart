@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:uee_project/pages/edit_details.dart';
 import 'package:uee_project/pages/logout.dart'; // Import the logout page
 import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
-import 'package:uee_project/services/authentication.dart'; // Import AuthServices
+import 'package:uee_project/services/authentication.dart';
+
+import 'add_skill.dart'; // Import AuthServices
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -225,14 +227,17 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 10),
                   ListTile(
                     title: Text(
-                      'Switch to Another Account',
+                      'Add skill',
                       style: TextStyle(color: Colors.blue),
                     ),
                     onTap: () {
-                      // Handle switch account
+                      // Navigate to AddSkillForm when tapped
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AddSkillForm()),
+                      );
                     },
                   ),
                   ListTile(

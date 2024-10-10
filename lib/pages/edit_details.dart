@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:fluttertoast/fluttertoast.dart'; // Import fluttertoast
 import 'package:uee_project/services/authentication.dart';
 
 class EditDetailsPage extends StatefulWidget {
@@ -10,6 +12,8 @@ class EditDetailsPage extends StatefulWidget {
 class _EditDetailsPageState extends State<EditDetailsPage> {
   String userName = '';
   String userEmail = '';
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
 
   @override
   void initState() {
@@ -17,6 +21,7 @@ class _EditDetailsPageState extends State<EditDetailsPage> {
     fetchUserDetails(); // Fetch user details on page load
   }
 
+  // Fetch the user details from Firestore and set to text controllers
   void fetchUserDetails() async {
     String? uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
@@ -25,8 +30,60 @@ class _EditDetailsPageState extends State<EditDetailsPage> {
         setState(() {
           userName = userData?['name'] ?? 'John Doe';
           userEmail = userData?['email'] ?? 'john.doe@mail.com';
+          // Set the fetched data to the text controllers
+          _nameController.text = userName;
+          _emailController.text = userEmail;
         });
       }
+    }
+  }
+
+  // Function to update the user's details in Firestore
+  Future<void> updateUserDetails() async {
+    String? uid = FirebaseAuth.instance.currentUser?.uid;
+    String newName = _nameController.text.trim();
+    String newEmail = _emailController.text.trim();
+
+    if (newName.isNotEmpty && newEmail.isNotEmpty && uid != null) {
+      try {
+        // Update the Firestore database with new name and email
+        await FirebaseFirestore.instance.collection('users').doc(uid).update({
+          'name': newName,
+          'email': newEmail,
+        });
+
+        // Show a success toast message
+        Fluttertoast.showToast(
+          msg: "Updated Successfully!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+
+        // Re-fetch updated user details to reload the page
+        fetchUserDetails();
+      } catch (e) {
+        Fluttertoast.showToast(
+          msg: "Error: $e",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+    } else {
+      Fluttertoast.showToast(
+        msg: "Please enter valid details",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.orange,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
 
@@ -47,7 +104,7 @@ class _EditDetailsPageState extends State<EditDetailsPage> {
       body: Stack(
         children: [
           ListView(
-            padding: EdgeInsets.zero, // Remove padding around ListView
+            padding: EdgeInsets.zero,
             children: [
               // Profile section with avatar, name, and shadow
               Container(
@@ -77,7 +134,7 @@ class _EditDetailsPageState extends State<EditDetailsPage> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      userName,
+                      userName, // Fetched user name displayed
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -109,8 +166,9 @@ class _EditDetailsPageState extends State<EditDetailsPage> {
                     ),
                     const SizedBox(height: 10),
                     TextField(
+                      controller: _nameController, // Controller for name input
                       decoration: InputDecoration(
-                        hintText: userName,
+                        hintText: 'Enter your name',
                         border: OutlineInputBorder(
                           borderRadius:
                               BorderRadius.circular(15), // Rounded corners
@@ -146,8 +204,10 @@ class _EditDetailsPageState extends State<EditDetailsPage> {
                     ),
                     const SizedBox(height: 10),
                     TextField(
+                      controller:
+                          _emailController, // Controller for email input
                       decoration: InputDecoration(
-                        hintText: userEmail,
+                        hintText: 'Enter your email',
                         border: OutlineInputBorder(
                           borderRadius:
                               BorderRadius.circular(15), // Rounded corners
@@ -170,20 +230,17 @@ class _EditDetailsPageState extends State<EditDetailsPage> {
               ),
               const SizedBox(height: 30),
 
-              // Add Save button
+              // Save button
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Handle the save logic here
-                  },
+                  onPressed: updateUserDetails, // Call update function
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 50, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    backgroundColor:
-                        Colors.blue, // Set background color to blue
+                    backgroundColor: Colors.blue,
                   ),
                   child: const Text(
                     'Save',
