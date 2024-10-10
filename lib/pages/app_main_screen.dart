@@ -81,12 +81,10 @@ class _AppMainScreenState extends State<AppMainScreen> {
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                selectedIndex == 3
-                    ? Iconsax.notification5
-                    : Iconsax.notification,
+                selectedIndex == 3 ? Iconsax.people5 : Iconsax.people,
                 color: selectedIndex == 3 ? kprimaryColor : Colors.grey[600],
               ),
-              label: 'Notification',
+              label: 'Community',
             ),
             BottomNavigationBarItem(
               icon: Icon(
@@ -116,7 +114,7 @@ class _AppMainScreenState extends State<AppMainScreen> {
       case 2:
         return navbarPage(Iconsax.folder5); // Course page
       case 3:
-        return navbarPage(Iconsax.notification5);
+        return navbarPage(Iconsax.people5);
       case 4:
         // return navbarPage(Iconsax.profile_2user5);
         return ProfilePage();
