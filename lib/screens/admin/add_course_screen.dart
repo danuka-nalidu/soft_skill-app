@@ -208,20 +208,20 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                   SizedBox(height: 20),
 
                   // Button to pick documents
-                  ElevatedButton(
-                    onPressed: _pickDocuments,
-                    child: Text('Pick PDFs'),
-                  ),
-                  SizedBox(height: 10),
-                  Wrap(
-                    children: _selectedDocs.map((file) {
-                      return ListTile(
-                        leading: Icon(Icons.insert_drive_file),
-                        title: Text(file.path.split('/').last),
-                      );
-                    }).toList(),
-                  ),
-                  SizedBox(height: 20),
+                  // ElevatedButton(
+                  //   onPressed: _pickDocuments,
+                  //   child: Text('Pick PDFs'),
+                  // ),
+                  // SizedBox(height: 10),
+                  // Wrap(
+                  //   children: _selectedDocs.map((file) {
+                  //     return ListTile(
+                  //       leading: Icon(Icons.insert_drive_file),
+                  //       title: Text(file.path.split('/').last),
+                  //     );
+                  //   }).toList(),
+                  // ),
+                  // SizedBox(height: 20),
 
                   // Submit button
                   ElevatedButton(
