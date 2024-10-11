@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uee_project/pages/edit_profile.dart';
+import 'package:uee_project/pages/lib_admin_page.dart';
 import 'package:uee_project/pages/logout.dart'; // Import the logout page
 import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
 import 'package:uee_project/services/authentication.dart';
@@ -177,6 +178,19 @@ class _AdminProfileState extends State<AdminProfile> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => AddSkillForm()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Add book',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                    onTap: () {
+                      // Navigate to AddSkillForm when tapped
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AdminPage()),
                       );
                     },
                   ),
