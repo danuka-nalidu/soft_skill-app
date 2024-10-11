@@ -90,71 +90,54 @@ class _UserCourseListScreenState extends State<UserCourseListScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                    child: ListTile(
-                      contentPadding: EdgeInsets.all(10),
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: imageUrl != null
-                            ? Image.network(
-                                imageUrl,
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.cover,
-                              )
-                            : Container(
-                                width: 80,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                  color: Colors.purple[100],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(Icons.image,
-                                    size: 40, color: Colors.purple[700]),
-                              ),
-                      ),
-                      title: Text(
-                        course.title,
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.person, size: 18, color: Colors.green),
-                            SizedBox(width: 4),
-                            Text(
-                              '${course.tutor}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.add_circle,
-                                color: Colors.blueAccent),
-                            onPressed: () async {
-                              await _addCourseToMyCourses(context, course);
-                            },
+                    child: Stack(
+                      children: [
+                        // Main content of the card
+                        ListTile(
+                          contentPadding: EdgeInsets.all(10),
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: imageUrl != null
+                                ? Image.network(
+                                    imageUrl,
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Container(
+                                    width: 80,
+                                    height: 80,
+                                    decoration: BoxDecoration(
+                                      color: Colors.purple[100],
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Icon(Icons.image,
+                                        size: 40, color: Colors.purple[700]),
+                                  ),
                           ),
-                          // IconButton(
-                          //   icon: Icon(Icons.arrow_forward, color: Colors.blueAccent),
-                          //   onPressed: () {
-                          //     Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (context) => UserCourseDetailScreen(course: course),
-                          //       ),
-                          //     );
-                          //   },
-                          // ),
-                          TextButton(
+                          title: Text(
+                            course.title,
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Row(
+                              children: [
+                                Icon(Icons.person,
+                                    size: 18, color: Colors.green),
+                                SizedBox(width: 4),
+                                Text(
+                                  '${course.tutor}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          trailing: TextButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -169,8 +152,20 @@ class _UserCourseListScreenState extends State<UserCourseListScreen> {
                               style: TextStyle(color: Colors.blueAccent),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        // Positioned "Add" icon in the top right corner
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: IconButton(
+                            icon: Icon(Icons.add_circle,
+                                color: Colors.blueAccent),
+                            onPressed: () async {
+                              await _addCourseToMyCourses(context, course);
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
