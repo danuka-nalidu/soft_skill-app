@@ -3,6 +3,8 @@ import 'package:uee_project/pages/edit_profile.dart';
 import 'package:uee_project/pages/lib_admin_page.dart';
 import 'package:uee_project/pages/logout.dart'; // Import the logout page
 import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
+import 'package:uee_project/screens/admin/add_course_screen.dart';
+import 'package:uee_project/screens/admin/course_list_screen.dart';
 import 'package:uee_project/services/authentication.dart';
 
 import 'add_skill.dart'; // Import AuthServices
@@ -191,6 +193,32 @@ class _AdminProfileState extends State<AdminProfile> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => AdminPage()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Add Course',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                    onTap: () {
+                      // Navigate to AddSkillForm when tapped
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AddCourseScreen()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'View Course',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                    onTap: () {
+                      // Navigate to AddSkillForm when tapped
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CourseListScreen()),
                       );
                     },
                   ),
