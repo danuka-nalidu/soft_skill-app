@@ -20,10 +20,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String category = 'All'; // The default selected category is "All"
+  String searchQuery = ''; // Variable to store the search query
+
   final CollectionReference categoriesItems =
       FirebaseFirestore.instance.collection("Categories");
   final CollectionReference skillItems = FirebaseFirestore.instance
-      .collection("SoftSkills"); // collection for skills section
+      .collection("SoftSkills"); // Collection for skills section
 
   String userName = ''; // Variable to store the user's name
 
@@ -39,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (uid != null) {
       Map<String, dynamic>? userData = await AuthServices().getUserData(uid);
       if (mounted) {
-        // Check if the widget is still in the tree
         setState(() {
           userName = userData?['name'] ?? ''; // Set the user's name
         });
@@ -61,13 +62,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    const SizedBox(height: 10),
                     headerParts(),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 22),
                       child: TextField(
+                        onChanged: (value) {
+                          // Update the search query whenever the user types in the search bar
+                          setState(() {
+                            searchQuery = value.toLowerCase();
+                          });
+                        },
                         decoration: InputDecoration(
                           filled: true,
                           prefixIcon: const Icon(
@@ -76,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           fillColor: Colors.white,
                           border: InputBorder.none,
-                          hintText: "Search here...",
+                          hintText: "Search skills...",
                           hintStyle: const TextStyle(
                             color: Colors.grey,
                           ),
@@ -94,9 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     // for banner
                     const BannerToExplore(),
                     const Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 20,
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 20),
                       child: Text(
                         "Categories",
                         style: TextStyle(
@@ -173,9 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     const Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 20,
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 20),
                       child: Text(
                         "Popular Skills",
                         style: TextStyle(
@@ -187,15 +188,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     // For skills
                     StreamBuilder(
-                      stream: skillItems.snapshots(),
+                      stream: category == 'All'
+                          ? skillItems
+                              .snapshots() // Load all skills if "All" is selected
+                          : skillItems
+                              .where('category', isEqualTo: category)
+                              .snapshots(), // Filter based on selected category
                       builder:
                           (context, AsyncSnapshot<QuerySnapshot> snapshotData) {
                         if (snapshotData.hasData) {
+                          // Filter skills based on the search query
+                          var filteredSkills = snapshotData.data!.docs.where(
+                              (doc) => doc['name']
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains(searchQuery));
+
                           return SizedBox(
-                            height:
-                                400, // You can also adjust the height as needed
+                            height: 400, // Adjust the height as needed
                             child: GridView.builder(
-                              itemCount: snapshotData.data!.docs.length,
+                              itemCount: filteredSkills.length,
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
@@ -205,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               itemBuilder: (context, index) {
                                 final DocumentSnapshot documentSnapshot =
-                                    snapshotData.data!.docs[index];
+                                    filteredSkills.elementAt(index);
                                 return GestureDetector(
                                   onTap: () {
                                     Navigator.push(
@@ -238,9 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
+                                        const SizedBox(height: 10),
                                         Text(
                                           documentSnapshot['name'],
                                           style: const TextStyle(
@@ -249,14 +259,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                         const SizedBox(
-                                          height: 5, // Reduced space
-                                        ),
+                                            height: 5), // Reduced space
                                         Row(
                                           children: [
                                             Text(
-                                              documentSnapshot['coursecount']
-                                                      .toString() +
-                                                  " courses", // Appending "courses" to coursecount
+                                              "${documentSnapshot['coursecount']} courses", // Appending "courses" to coursecount
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16,
@@ -292,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: CircularProgressIndicator(),
                         );
                       },
-                    )
+                    ),
                   ],
                 ),
               ),
