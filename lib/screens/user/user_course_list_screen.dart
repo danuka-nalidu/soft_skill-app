@@ -37,18 +37,35 @@ class _UserCourseListScreenState extends State<UserCourseListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Courses'),
+        backgroundColor: Colors.blue[800],
+        elevation: 0,
+        title: Padding(
+          padding: const EdgeInsets.only(left: 16, bottom: 0), // Move the title lower
+          child: Text(
+            'Courses',
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(60),
+          preferredSize: Size.fromHeight(100), // Increase the height
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search courses...',
-                prefixIcon: Icon(Icons.search),
+                hintText: 'Search Here',
+                hintStyle: TextStyle(color: Colors.grey),
+                filled: true,
+                fillColor: Colors.white,
+                prefixIcon: Icon(Icons.search, color: Colors.grey),
+                contentPadding: EdgeInsets.symmetric(vertical: 0),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
                 ),
               ),
             ),
@@ -56,8 +73,7 @@ class _UserCourseListScreenState extends State<UserCourseListScreen> {
         ),
       ),
       body: FutureBuilder(
-        future:
-            Provider.of<CourseProvider>(context, listen: false).fetchCourses(),
+        future: Provider.of<CourseProvider>(context, listen: false).fetchCourses(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -80,9 +96,7 @@ class _UserCourseListScreenState extends State<UserCourseListScreen> {
                 itemCount: courses.length,
                 itemBuilder: (context, index) {
                   final course = courses[index];
-
-                  String? imageUrl =
-                      course.media.isNotEmpty ? course.media[0] : null;
+                  String? imageUrl = course.media.isNotEmpty ? course.media[0] : null;
 
                   return Card(
                     elevation: 4,
@@ -93,51 +107,59 @@ class _UserCourseListScreenState extends State<UserCourseListScreen> {
                     child: Stack(
                       children: [
                         // Main content of the card
-                        ListTile(
-                          contentPadding: EdgeInsets.all(10),
-                          leading: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: imageUrl != null
-                                ? Image.network(
-                                    imageUrl,
-                                    width: 80,
-                                    height: 80,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(
-                                    width: 80,
-                                    height: 80,
-                                    decoration: BoxDecoration(
-                                      color: Colors.purple[100],
-                                      borderRadius: BorderRadius.circular(8),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 40), // Adjust padding to make space for the "View Course" button
+                          child: ListTile(
+                            contentPadding: EdgeInsets.all(10),
+                            leading: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: imageUrl != null
+                                  ? Image.network(
+                                      imageUrl,
+                                      width: 80,
+                                      height: 80,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        color: Colors.purple[100],
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Icon(Icons.image,
+                                          size: 40, color: Colors.purple[700]),
                                     ),
-                                    child: Icon(Icons.image,
-                                        size: 40, color: Colors.purple[700]),
+                            ),
+                            title: Text(
+                              course.title,
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.person,
+                                      size: 18, color: Colors.green),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    '${course.tutor}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black54,
+                                    ),
                                   ),
-                          ),
-                          title: Text(
-                            course.title,
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Row(
-                              children: [
-                                Icon(Icons.person,
-                                    size: 18, color: Colors.green),
-                                SizedBox(width: 4),
-                                Text(
-                                  '${course.tutor}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                          trailing: TextButton(
+                        ),
+                        // Positioned "View Course" button at the bottom right
+                        Positioned(
+                          bottom: 8,
+                          right: 16,
+                          child: TextButton(
                             onPressed: () {
                               Navigator.push(
                                 context,

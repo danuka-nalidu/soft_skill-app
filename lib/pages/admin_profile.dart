@@ -45,6 +45,7 @@ class _AdminProfileState extends State<AdminProfile> {
             color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25),
         backgroundColor: Colors.blue, // Set the app bar color to blue
         centerTitle: true,
+        automaticallyImplyLeading: false, // Remove the back button
       ),
       body: ListView(
         children: [
@@ -205,7 +206,8 @@ class _AdminProfileState extends State<AdminProfile> {
                       // Navigate to AddSkillForm when tapped
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => AddCourseScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => AddCourseScreen()),
                       );
                     },
                   ),
@@ -218,7 +220,8 @@ class _AdminProfileState extends State<AdminProfile> {
                       // Navigate to AddSkillForm when tapped
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CourseListScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => CourseListScreen()),
                       );
                     },
                   ),
