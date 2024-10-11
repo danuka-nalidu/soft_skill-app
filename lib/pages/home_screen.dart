@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final CollectionReference categoriesItems =
       FirebaseFirestore.instance.collection("Categories");
   final CollectionReference skillItems = FirebaseFirestore.instance
-      .collection("SoftSkills"); // collection for skills section
+      .collection("SoftSkills"); // Collection for skills section
 
   String userName = ''; // Variable to store the user's name
 
@@ -39,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (uid != null) {
       Map<String, dynamic>? userData = await AuthServices().getUserData(uid);
       if (mounted) {
-        // Check if the widget is still in the tree
         setState(() {
           userName = userData?['name'] ?? ''; // Set the user's name
         });
@@ -61,9 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    const SizedBox(height: 10),
                     headerParts(),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 22),
@@ -94,9 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     // for banner
                     const BannerToExplore(),
                     const Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 20,
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 20),
                       child: Text(
                         "Categories",
                         style: TextStyle(
@@ -173,9 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     const Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 20,
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 20),
                       child: Text(
                         "Popular Skills",
                         style: TextStyle(
@@ -187,7 +180,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     // For skills
                     StreamBuilder(
-                      stream: skillItems.snapshots(),
+                      stream: category == 'All'
+                          ? skillItems
+                              .snapshots() // Load all skills if "All" is selected
+                          : skillItems
+                              .where('category', isEqualTo: category)
+                              .snapshots(), // Filter based on selected category
                       builder:
                           (context, AsyncSnapshot<QuerySnapshot> snapshotData) {
                         if (snapshotData.hasData) {
@@ -254,9 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         Row(
                                           children: [
                                             Text(
-                                              documentSnapshot['coursecount']
-                                                      .toString() +
-                                                  " courses", // Appending "courses" to coursecount
+                                              "${documentSnapshot['coursecount']} courses", // Appending "courses" to coursecount
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16,
