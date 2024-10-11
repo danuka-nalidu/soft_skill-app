@@ -4,6 +4,8 @@ import 'package:uee_project/pages/home_page1.dart';
 import 'package:uee_project/pages/home_screen.dart';
 import 'package:uee_project/pages/lib_home_page.dart';
 import 'package:uee_project/pages/lib_user_home_page.dart';
+import 'package:uee_project/screens/admin/course_list_screen.dart';
+import 'package:uee_project/screens/user/user_course_list_screen.dart';
 
 import 'profile.dart';
 
@@ -116,7 +118,7 @@ class _AppMainScreenState extends State<AppMainScreen> {
         // return navbarPage(Iconsax.document5);
         return LibUserHomePage();
       case 2:
-        return navbarPage(Iconsax.folder5); // Course page
+        return UserCourseListScreen(); // Course page
       case 3:
         // return navbarPage(Iconsax.people5);
         return const HomePage1();

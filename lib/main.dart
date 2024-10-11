@@ -2,10 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart'; // Import Provider
 import 'package:uee_project/pages/home_screen.dart'; // Regular user screen
 import 'package:uee_project/pages/login.dart'; // Login screen
 import 'package:uee_project/pages/admin_profile.dart'; // Admin screen
 import 'pages/app_main_screen.dart'; // Regular user screen
+import 'providers/course_provider.dart'; // Import CourseProvider
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,9 +20,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: AuthStateWrapper(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CourseProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: AuthStateWrapper(),
+      ),
     );
   }
 }
