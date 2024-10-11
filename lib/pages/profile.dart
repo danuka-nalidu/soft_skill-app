@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:uee_project/pages/edit_profile.dart';
+import 'package:uee_project/pages/login.dart'; // Import LoginScreen
 import 'package:uee_project/pages/logout.dart'; // Import the logout page
 import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
 import 'package:uee_project/services/authentication.dart';
+import 'package:fluttertoast/fluttertoast.dart'; // Import toast
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -29,6 +32,78 @@ class _ProfilePageState extends State<ProfilePage> {
         });
       }
     }
+  }
+
+  Future<void> deleteProfile() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        // Deleting the user's document from Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .delete();
+
+        // Deleting the user's account from Firebase Auth
+        await user.delete();
+
+        // Show toast message
+        Fluttertoast.showToast(
+          msg: "Account deleted successfully!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
+
+        // Navigate to LoginScreen after deletion
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+          (route) => false,
+        );
+      } catch (e) {
+        Fluttertoast.showToast(
+          msg: "Error: $e",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      }
+    }
+  }
+
+  void _showDeleteConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Delete Account"),
+          content: Text(
+              "Are you sure you want to delete your account? This action cannot be undone."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                deleteProfile(); // Call delete profile method
+              },
+              child: Text(
+                "Delete",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -233,11 +308,17 @@ class _ProfilePageState extends State<ProfilePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              const Logout(), // Use the existing Logout class
+                          builder: (context) => const Logout(),
                         ),
                       );
                     },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Delete Account',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    onTap: _showDeleteConfirmationDialog,
                   ),
                 ],
               ),
