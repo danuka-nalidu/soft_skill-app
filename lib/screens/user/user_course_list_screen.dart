@@ -1,94 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-// import '../../models/course_model.dart';
-// import '../../providers/course_provider.dart';
-// import 'user_course_detail_screen.dart';
-//
-// class UserCourseListScreen extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Courses'),
-//       ),
-//       body: FutureBuilder(
-//         future: Provider.of<CourseProvider>(context, listen: false).fetchCourses(),
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return Center(child: CircularProgressIndicator());
-//           }
-//           if (snapshot.hasError) {
-//             return Center(child: Text('Error loading courses'));
-//           }
-//
-//           return Consumer<CourseProvider>(
-//             builder: (context, courseProvider, child) {
-//               if (courseProvider.courses.isEmpty) {
-//                 return Center(child: Text('No courses available'));
-//               }
-//
-//               return ListView.builder(
-//                 itemCount: courseProvider.courses.length,
-//                 itemBuilder: (context, index) {
-//                   final course = courseProvider.courses[index];
-//
-//                   String? imageUrl = course.media.isNotEmpty ? course.media[0] : null;
-//
-//                   return Card(
-//                     margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-//                     child: ListTile(
-//                       contentPadding: EdgeInsets.all(10),
-//                       leading: imageUrl != null
-//                           ? Image.network(
-//                               imageUrl,
-//                               width: 100,
-//                               height: 100,
-//                               fit: BoxFit.cover,
-//                             )
-//                           : Container(
-//                               width: 100,
-//                               height: 100,
-//                               color: Colors.grey[300],
-//                               child: Icon(Icons.image, size: 50, color: Colors.grey[700]),
-//                             ),
-//                       title: Text(
-//                         course.title,
-//                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//                       ),
-//                       subtitle: Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           SizedBox(height: 5),
-//                           Text('${course.tutor}', style: TextStyle(fontWeight: FontWeight.bold)),
-//                         ],
-//                       ),
-//                       trailing: TextButton(
-//                         onPressed: () {
-//                           Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                               builder: (context) => UserCourseDetailScreen(course: course),
-//                             ),
-//                           );
-//                         },
-//                         child: Text(
-//                           'View Course',
-//                           style: TextStyle(color: Colors.blue),
-//                         ),
-//                       ),
-//                     ),
-//                   );
-//                 },
-//               );
-//             },
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
-
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -96,15 +5,59 @@ import '../../models/course_model.dart';
 import '../../providers/course_provider.dart';
 import 'user_course_detail_screen.dart';
 
-class UserCourseListScreen extends StatelessWidget {
+class UserCourseListScreen extends StatefulWidget {
+  @override
+  _UserCourseListScreenState createState() => _UserCourseListScreenState();
+}
+
+class _UserCourseListScreenState extends State<UserCourseListScreen> {
+  TextEditingController _searchController = TextEditingController();
+  String _searchTerm = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    setState(() {
+      _searchTerm = _searchController.text.toLowerCase();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Courses'),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(60),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search courses...',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
       body: FutureBuilder(
-        future: Provider.of<CourseProvider>(context, listen: false).fetchCourses(),
+        future:
+            Provider.of<CourseProvider>(context, listen: false).fetchCourses(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -115,16 +68,21 @@ class UserCourseListScreen extends StatelessWidget {
 
           return Consumer<CourseProvider>(
             builder: (context, courseProvider, child) {
-              if (courseProvider.courses.isEmpty) {
+              final courses = courseProvider.courses.where((course) {
+                return course.title.toLowerCase().contains(_searchTerm);
+              }).toList();
+
+              if (courses.isEmpty) {
                 return Center(child: Text('No courses available'));
               }
 
               return ListView.builder(
-                itemCount: courseProvider.courses.length,
+                itemCount: courses.length,
                 itemBuilder: (context, index) {
-                  final course = courseProvider.courses[index];
+                  final course = courses[index];
 
-                  String? imageUrl = course.media.isNotEmpty ? course.media[0] : null;
+                  String? imageUrl =
+                      course.media.isNotEmpty ? course.media[0] : null;
 
                   return Card(
                     elevation: 4,
@@ -138,24 +96,26 @@ class UserCourseListScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                         child: imageUrl != null
                             ? Image.network(
-                          imageUrl,
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                        )
+                                imageUrl,
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                              )
                             : Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.purple[100],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(Icons.image, size: 40, color: Colors.purple[700]),
-                        ),
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  color: Colors.purple[100],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(Icons.image,
+                                    size: 40, color: Colors.purple[700]),
+                              ),
                       ),
                       title: Text(
                         course.title,
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       subtitle: Padding(
                         padding: const EdgeInsets.only(top: 8.0),
@@ -176,25 +136,38 @@ class UserCourseListScreen extends StatelessWidget {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Icon to add the course to "My Courses"
                           IconButton(
-                            icon: Icon(Icons.add_circle, color: Colors.blueAccent),
+                            icon: Icon(Icons.add_circle,
+                                color: Colors.blueAccent),
                             onPressed: () async {
-                              // Add the course to "My Courses"
                               await _addCourseToMyCourses(context, course);
                             },
                           ),
-                          // Forward arrow icon to view course details
-                          IconButton(
-                            icon: Icon(Icons.arrow_forward, color: Colors.blueAccent),
+                          // IconButton(
+                          //   icon: Icon(Icons.arrow_forward, color: Colors.blueAccent),
+                          //   onPressed: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //         builder: (context) => UserCourseDetailScreen(course: course),
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
+                          TextButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => UserCourseDetailScreen(course: course),
+                                  builder: (context) =>
+                                      UserCourseDetailScreen(course: course),
                                 ),
                               );
                             },
+                            child: Text(
+                              'View Course',
+                              style: TextStyle(color: Colors.blueAccent),
+                            ),
                           ),
                         ],
                       ),
@@ -209,11 +182,10 @@ class UserCourseListScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _addCourseToMyCourses(BuildContext context, CourseModel course) async {
+  Future<void> _addCourseToMyCourses(
+      BuildContext context, CourseModel course) async {
     try {
-
       final myCoursesRef = FirebaseFirestore.instance.collection('myCourses');
-
 
       final existingCourse = await myCoursesRef.doc(course.id).get();
       if (existingCourse.exists) {
@@ -222,7 +194,6 @@ class UserCourseListScreen extends StatelessWidget {
         );
         return;
       }
-
 
       await myCoursesRef.doc(course.id).set({
         'id': course.id,
@@ -242,6 +213,4 @@ class UserCourseListScreen extends StatelessWidget {
       print('Error adding course to My Courses: $e');
     }
   }
-
 }
-
