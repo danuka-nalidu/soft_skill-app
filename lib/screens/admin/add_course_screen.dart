@@ -23,7 +23,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
   final _durationController = TextEditingController();
   final _tutorController = TextEditingController();
   String? _selectedCategory;
-  final _categories = ['Development', 'Design', 'Marketing', 'Business'];
+  final _categories = ['Speaking', 'Decision making', 'Verbal Communication', 'Conflict Resolution', 'Analytical thinking'];
   List<File> _selectedImages = [];  // To store selected images
   List<File> _selectedDocs = [];    // To store selected documents
   bool _isLoading = false;
