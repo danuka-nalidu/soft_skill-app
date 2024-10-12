@@ -153,7 +153,7 @@ class _UpdateCourseScreenState extends State<UpdateCourseScreen> {
                   DropdownButtonFormField<String>(
                     value: _selectedCategory,
                     hint: Text('Select Category'),
-                    items: ['Development', 'Design', 'Marketing', 'Business'].map((String category) {
+                    items: ['Speaking', 'Decision making', 'Verbal Communication', 'Conflict Resolution', 'Analytical thinking'].map((String category) {
                       return DropdownMenuItem<String>(
                         value: category,
                         child: Text(category),
