@@ -16,6 +16,7 @@ class CommunityPage extends StatefulWidget {
 
 class _CommunityPageState extends State<CommunityPage> {
   String? currentUserEmail; // Nullable to store the logged-in user's email
+  String searchQuery = ""; // Search query string
 
   @override
   void initState() {
@@ -159,6 +160,27 @@ class _CommunityPageState extends State<CommunityPage> {
       body: Center(
         child: Column(
           children: [
+            // Search bar implementation
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search posts...',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    searchQuery = value.toLowerCase(); // Update the search query as user types
+                  });
+                },
+              ),
+            ),
             Expanded(
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance
@@ -167,10 +189,15 @@ class _CommunityPageState extends State<CommunityPage> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
+                    var filteredDocs = snapshot.data!.docs.where((doc) {
+                      String message = doc['Message'].toString().toLowerCase();
+                      return message.contains(searchQuery); // Filter posts based on search query
+                    }).toList();
+
                     return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
+                      itemCount: filteredDocs.length,
                       itemBuilder: (context, index) {
-                        final post = snapshot.data!.docs[index];
+                        final post = filteredDocs[index];
                         final postId = post.id;
                         final postMessage = post['Message'];
                         final postUserEmail = post['User email'];

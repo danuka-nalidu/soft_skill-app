@@ -47,13 +47,9 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
         .collection('lessons')
         .snapshots()
         .map((snapshot) => snapshot.docs
-        .map((doc) => {
-      'id': doc.id,
-      ...doc.data() as Map<String, dynamic>
-    })
-        .toList());
+            .map((doc) => {'id': doc.id, ...doc.data() as Map<String, dynamic>})
+            .toList());
   }
-
 
   Future<void> addReview(String courseId, ReviewModel review) async {
     try {
@@ -75,11 +71,10 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
-        .map((doc) => ReviewModel.fromMap(doc.data() as Map<String, dynamic>))
-        .toList());
+            .map((doc) =>
+                ReviewModel.fromMap(doc.data() as Map<String, dynamic>))
+            .toList());
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +82,7 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blue,
         title: Text('Course Details'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -133,29 +129,38 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MyCoursesPage()),
-                );
-              },
-              icon: Icon(Icons.school, color: Colors.white),
-              label: Text('Go to My Courses'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-                backgroundColor: Colors.blueAccent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+            child: SizedBox(
+              width: double
+                  .infinity, // Increase the width to take the full available width
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyCoursesPage()),
+                  );
+                },
+                icon: Icon(Icons.school, color: Colors.white),
+                label: Text(
+                  'Go to My Courses',
+                  style:
+                      TextStyle(color: Colors.white), // Text color set to white
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                  backgroundColor: Colors.blueAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        12), // Applied border radius of 12
+                  ),
                 ),
               ),
             ),
-          ),
+          )
         ],
       ),
     );
   }
-
 
   Widget _buildReviewsTab(String courseId) {
     return Column(
@@ -198,7 +203,8 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
                             ),
                             Text(
                               'Reviewed on: ${review.timestamp}',
-                              style: TextStyle(fontSize: 12, color: Colors.grey),
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.grey),
                             ),
                           ],
                         ),
@@ -216,13 +222,18 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddReviewScreen(courseId: courseId)),
+                MaterialPageRoute(
+                    builder: (context) => AddReviewScreen(courseId: courseId)),
               );
             },
             icon: Icon(Icons.rate_review, color: Colors.white),
-            label: Text('Add Review'),
+            label: Text(
+              'Add Review',
+              style: TextStyle(color: Colors.white),
+            ),
             style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0), backgroundColor: Colors.blueAccent,
+              padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+              backgroundColor: Colors.blueAccent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -279,7 +290,8 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.person, size: 22, color: Colors.blueGrey),
+                            Icon(Icons.person,
+                                size: 22, color: Colors.blueGrey),
                             SizedBox(width: 8),
                             Text(
                               course.tutor,
@@ -293,7 +305,8 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
                         ),
                         Row(
                           children: [
-                            Icon(Icons.play_circle_fill, size: 24, color: Colors.orangeAccent),
+                            Icon(Icons.play_circle_fill,
+                                size: 24, color: Colors.orangeAccent),
                             SizedBox(width: 8),
                             Icon(Icons.verified, size: 24, color: Colors.green),
                             SizedBox(width: 6),
@@ -356,18 +369,21 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
                     child: StreamBuilder<List<ReviewModel>>(
                       stream: _getReviewsStream(course.id),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return Center(child: CircularProgressIndicator());
                         } else if (snapshot.hasError) {
                           return Text('Error loading ratings.');
-                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
                           return Text('No ratings yet.');
                         } else {
                           final reviews = snapshot.data!;
                           final totalReviews = reviews.length;
                           final averageRating = reviews
-                              .map((review) => review.rating)
-                              .reduce((a, b) => a + b) / totalReviews;
+                                  .map((review) => review.rating)
+                                  .reduce((a, b) => a + b) /
+                              totalReviews;
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -444,7 +460,8 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
           return Center(child: Text('No lessons available.'));
         } else {
           final lessons = snapshot.data!;
-          int firstIncompleteIndex = lessons.indexWhere((lesson) => !(lesson['isCompleted'] ?? false));
+          int firstIncompleteIndex =
+              lessons.indexWhere((lesson) => !(lesson['isCompleted'] ?? false));
 
           // If all lessons are completed, just show the completed lessons
           if (firstIncompleteIndex == -1) {
@@ -452,7 +469,8 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
               shrinkWrap: true,
               itemCount: lessons.length,
               itemBuilder: (context, index) {
-                return _buildLessonCard(context, index, lessons[index], lessons[index]['isCompleted'] ?? false);
+                return _buildLessonCard(context, index, lessons[index],
+                    lessons[index]['isCompleted'] ?? false);
               },
             );
           }
@@ -462,8 +480,10 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
             shrinkWrap: true,
             itemCount: lessons.length,
             itemBuilder: (context, index) {
-              if (lessons[index]['isCompleted'] || index == firstIncompleteIndex) {
-                return _buildLessonCard(context, index, lessons[index], lessons[index]['isCompleted'] ?? false);
+              if (lessons[index]['isCompleted'] ||
+                  index == firstIncompleteIndex) {
+                return _buildLessonCard(context, index, lessons[index],
+                    lessons[index]['isCompleted'] ?? false);
               }
               return Container();
             },
@@ -473,7 +493,8 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
     );
   }
 
-  Widget _buildLessonCard(BuildContext context, int index, Map<String, dynamic> lesson, bool isCompleted) {
+  Widget _buildLessonCard(BuildContext context, int index,
+      Map<String, dynamic> lesson, bool isCompleted) {
     final lessonId = lesson['id'];
 
     return Card(
@@ -574,12 +595,13 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
                   onPressed: isCompleted
                       ? null
                       : () async {
-                    await _markLessonAsCompleted(index, lessonId);
-                  },
+                          await _markLessonAsCompleted(index, lessonId);
+                        },
                   icon: Icon(isCompleted ? Icons.check : Icons.arrow_forward),
                   label: Text(isCompleted ? 'Completed' : 'Next'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isCompleted ? Colors.grey : Colors.greenAccent,
+                    backgroundColor:
+                        isCompleted ? Colors.grey : Colors.greenAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -593,7 +615,7 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
     );
   }
 
-    Future<void> _markLessonAsCompleted(int index, String lessonId) async {
+  Future<void> _markLessonAsCompleted(int index, String lessonId) async {
     try {
       // Mark the lesson as completed in Firestore
       await FirebaseFirestore.instance
@@ -634,7 +656,9 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
                 mediaUrl.endsWith('.jpeg')) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FullScreenImageScreen(imageUrl: mediaUrl)),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        FullScreenImageScreen(imageUrl: mediaUrl)),
               );
             }
           },
@@ -646,7 +670,8 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
                 SizedBox(width: 8),
                 Text(
                   'Media Link ${index + 1}',
-                  style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                  style: TextStyle(
+                      color: Colors.blue, decoration: TextDecoration.underline),
                 ),
               ],
             ),
@@ -698,20 +723,23 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: Row(
               children: [
-                Icon(fileUrl.endsWith('.pdf')
-                    ? Icons.picture_as_pdf
-                    : fileUrl.endsWith('.mp4')
-                    ? Icons.videocam
-                    : Icons.insert_drive_file,
-                    color: Colors.blue, size: 18),
+                Icon(
+                    fileUrl.endsWith('.pdf')
+                        ? Icons.picture_as_pdf
+                        : fileUrl.endsWith('.mp4')
+                            ? Icons.videocam
+                            : Icons.insert_drive_file,
+                    color: Colors.blue,
+                    size: 18),
                 SizedBox(width: 8),
                 Text(
                   fileUrl.endsWith('.pdf')
                       ? 'PDF Link ${index + 1}'
                       : fileUrl.endsWith('.mp4')
-                      ? 'Video Link ${index + 1}'
-                      : 'File Link ${index + 1}',
-                  style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                          ? 'Video Link ${index + 1}'
+                          : 'File Link ${index + 1}',
+                  style: TextStyle(
+                      color: Colors.blue, decoration: TextDecoration.underline),
                 ),
               ],
             ),
@@ -727,5 +755,4 @@ class _UserCourseDetailScreenState extends State<UserCourseDetailScreen>
       print('Error opening file: ${result.message}');
     }
   }
-
 }

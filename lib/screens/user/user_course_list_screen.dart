@@ -37,10 +37,10 @@ class _UserCourseListScreenState extends State<UserCourseListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue[800],
+        backgroundColor: Colors.blue,
         elevation: 0,
         title: Padding(
-          padding: const EdgeInsets.only(left: 16, bottom: 0), // Move the title lower
+          padding: const EdgeInsets.only(left: 16, bottom: 0),
           child: Text(
             'Courses',
             style: TextStyle(
@@ -51,7 +51,7 @@ class _UserCourseListScreenState extends State<UserCourseListScreen> {
           ),
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(100), // Increase the height
+          preferredSize: Size.fromHeight(100),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
             child: TextField(
@@ -73,7 +73,8 @@ class _UserCourseListScreenState extends State<UserCourseListScreen> {
         ),
       ),
       body: FutureBuilder(
-        future: Provider.of<CourseProvider>(context, listen: false).fetchCourses(),
+        future:
+            Provider.of<CourseProvider>(context, listen: false).fetchCourses(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -92,67 +93,85 @@ class _UserCourseListScreenState extends State<UserCourseListScreen> {
                 return Center(child: Text('No courses available'));
               }
 
-              return ListView.builder(
+              return GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // Display 2 cards per row
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 3 / 4, // Adjust the card aspect ratio
+                ),
+                padding: EdgeInsets.all(10),
                 itemCount: courses.length,
                 itemBuilder: (context, index) {
                   final course = courses[index];
-                  String? imageUrl = course.media.isNotEmpty ? course.media[0] : null;
+                  String? imageUrl =
+                      course.media.isNotEmpty ? course.media[0] : null;
 
                   return Card(
                     elevation: 4,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                     child: Stack(
                       children: [
                         // Main content of the card
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 40), // Adjust padding to make space for the "View Course" button
-                          child: ListTile(
-                            contentPadding: EdgeInsets.all(10),
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: imageUrl != null
-                                  ? Image.network(
-                                      imageUrl,
-                                      width: 80,
-                                      height: 80,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Container(
-                                      width: 80,
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                        color: Colors.purple[100],
-                                        borderRadius: BorderRadius.circular(8),
+                          padding: const EdgeInsets.only(bottom: 40),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: imageUrl != null
+                                    ? Image.network(
+                                        imageUrl,
+                                        width: double.infinity,
+                                        height: 120, // Increased image size
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Container(
+                                        width: double.infinity,
+                                        height:
+                                            120, // Increased placeholder size
+                                        decoration: BoxDecoration(
+                                          color: Colors.purple[100],
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Icon(Icons.image,
+                                            size: 40,
+                                            color: Colors.purple[700]),
                                       ),
-                                      child: Icon(Icons.image,
-                                          size: 40, color: Colors.purple[700]),
-                                    ),
-                            ),
-                            title: Text(
-                              course.title,
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.person,
-                                      size: 18, color: Colors.green),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    '${course.tutor}',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ],
                               ),
-                            ),
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Text(
+                                  course.title,
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.person,
+                                        size: 18, color: Colors.green),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      '${course.tutor}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         // Positioned "View Course" button at the bottom right
