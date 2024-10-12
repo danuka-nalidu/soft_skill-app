@@ -35,8 +35,6 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
     }
   }
 
-
-
   Future<void> _submitReview() async {
     if (_reviewController.text.isEmpty || _rating == 0) {
       // Show error message if fields are not filled
@@ -68,40 +66,92 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Add Review')),
+      appBar: AppBar(
+        title: Text('Add Review'),
+        backgroundColor: Colors.blueAccent,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _reviewController,
-              decoration: InputDecoration(labelText: 'Write your review'),
-              maxLines: 4,
-            ),
-            SizedBox(height: 16),
-            Text('Rate this course:'),
-            Row(
-              children: List.generate(5, (index) {
-                return IconButton(
-                  icon: Icon(
-                    index < _rating ? Icons.star : Icons.star_border,
-                    color: Colors.amber,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Card for better visual separation
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Review Input Field
+                      TextField(
+                        controller: _reviewController,
+                        decoration: InputDecoration(
+                          labelText: 'Write your review',
+                          labelStyle: TextStyle(color: Colors.blueAccent),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        maxLines: 4,
+                      ),
+                      SizedBox(height: 20),
+                      // Rating Section
+                      Text(
+                        'Rate this course:',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: List.generate(5, (index) {
+                          return IconButton(
+                            icon: Icon(
+                              index < _rating ? Icons.star : Icons.star_border,
+                              color: Colors.amber,
+                              size: 30,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _rating = index + 1;
+                              });
+                            },
+                          );
+                        }),
+                      ),
+                    ],
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _rating = index + 1;
-                    });
-                  },
-                );
-              }),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _submitReview,
-              child: Text('Submit Review'),
-            ),
-          ],
+                ),
+              ),
+              SizedBox(height: 30),
+              // Submit Button
+              Center(
+                child: ElevatedButton(
+                  onPressed: _submitReview,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32.0, vertical: 16.0),
+                    child: Text(
+                      'Submit Review',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

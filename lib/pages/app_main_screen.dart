@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:uee_project/components/communitypage.dart';
 import 'package:uee_project/pages/home_page1.dart';
 import 'package:uee_project/pages/home_screen.dart';
 import 'package:uee_project/pages/lib_home_page.dart';
@@ -121,7 +122,7 @@ class _AppMainScreenState extends State<AppMainScreen> {
         return UserCourseListScreen(); // Course page
       case 3:
         // return navbarPage(Iconsax.people5);
-        return const HomePage1();
+        return const CommunityPage();
       case 4:
         // return navbarPage(Iconsax.profile_2user5);
         return ProfilePage();

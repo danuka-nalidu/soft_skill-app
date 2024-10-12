@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../screens/user/user_course_detail_screen.dart';
+import '../models/course_model.dart'; // Import the CourseModel class
 
 class SkillDetailScreen extends StatefulWidget {
   final DocumentSnapshot<Object?> documentSnapshot;
@@ -11,11 +13,15 @@ class SkillDetailScreen extends StatefulWidget {
 
 class _SkillDetailScreenState extends State<SkillDetailScreen> {
   late bool isFavourite;
+  late String skillName;
+  late Stream<QuerySnapshot> courseStream;
 
   @override
   void initState() {
     super.initState();
     isFavourite = widget.documentSnapshot['isfavourite'] ?? false;
+    skillName = widget.documentSnapshot['name']; // Get the skill name
+    fetchCourses(); // Fetch related courses
   }
 
   // Function to toggle the favorite status
@@ -26,15 +32,24 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
 
     // Update the Firestore document with the new favorite status
     await FirebaseFirestore.instance
-        .collection('skills')
+        .collection('SoftSkills')
         .doc(widget.documentSnapshot.id)
         .update({'isfavourite': isFavourite});
+  }
+
+  // Fetch courses based on the skill name (which acts as category in courses)
+  void fetchCourses() {
+    courseStream = FirebaseFirestore.instance
+        .collection('courses')
+        .where('category',
+            isEqualTo: skillName) // Compare category with skill name
+        .snapshots();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, //color of the body
+      backgroundColor: Colors.white,
       body: ListView(
         children: [
           Stack(
@@ -71,8 +86,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                     Column(
                       children: [
                         const Icon(Icons.people,
-                            color: Colors.black54,
-                            size: 40), // Increased icon size
+                            color: Colors.black54, size: 40),
                         const SizedBox(height: 5),
                         Text(
                           '${widget.documentSnapshot['coursecount']}',
@@ -80,13 +94,10 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                         ),
                       ],
                     ),
-                    // Vertical Divider
                     Container(
-                      height: 50,
-                      width: 1,
-                      color: Colors.grey, // Vertical divider line
-                    ),
-                    // Progress Section
+                        height: 50,
+                        width: 1,
+                        color: Colors.grey), // Vertical Divider
                     Column(
                       children: [
                         Stack(
@@ -106,19 +117,13 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                           ],
                         ),
                         const SizedBox(height: 5),
-                        const Text(
-                          "Progress",
-                          style: TextStyle(fontSize: 14),
-                        ),
+                        const Text("Progress", style: TextStyle(fontSize: 14)),
                       ],
                     ),
-                    // Vertical Divider
                     Container(
-                      height: 50,
-                      width: 1,
-                      color: Colors.grey, // Vertical divider line
-                    ),
-                    // Favorite Section
+                        height: 50,
+                        width: 1,
+                        color: Colors.grey), // Vertical Divider
                     Column(
                       children: [
                         GestureDetector(
@@ -128,33 +133,11 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                                 ? Icons.favorite
                                 : Icons.favorite_border,
                             color: isFavourite ? Colors.red : Colors.grey,
-                            size: 40, // Increased icon size
+                            size: 40,
                           ),
                         ),
                         const SizedBox(height: 5),
-                        const Text(
-                          "Fav",
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ],
-                    ),
-                    // Vertical Divider
-                    Container(
-                      height: 50,
-                      width: 1,
-                      color: Colors.grey, // Vertical divider line
-                    ),
-                    // More options section
-                    const Column(
-                      children: [
-                        Icon(Icons.more_vert,
-                            color: Colors.black54,
-                            size: 40), // Increased icon size
-                        SizedBox(height: 5),
-                        Text(
-                          "More",
-                          style: TextStyle(fontSize: 14),
-                        ),
+                        const Text("Fav", style: TextStyle(fontSize: 14)),
                       ],
                     ),
                   ],
@@ -166,9 +149,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                   widget.documentSnapshot['description'],
                   maxLines: 7,
                   style: const TextStyle(
-                    fontSize: 20,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                      fontSize: 20, overflow: TextOverflow.ellipsis),
                 ),
                 const SizedBox(height: 20),
 
@@ -181,10 +162,82 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                // Placeholder for courses
+
+                // Fetch and display related courses
+                StreamBuilder<QuerySnapshot>(
+                  stream: courseStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.docs.isEmpty) {
+                        return const Text(
+                          "No courses found for this skill.",
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        );
+                      }
+
+                      return Column(
+                        children: snapshot.data!.docs.map((courseDoc) {
+                          // Create a CourseModel object from Firestore data
+                          final course = CourseModel(
+                            id: courseDoc.id,
+                            title: courseDoc['title'],
+                            description: courseDoc['description'],
+                            duration: courseDoc['duration'],
+                            media: List<String>.from(courseDoc['media']),
+                            tutor: courseDoc['tutor'], category: '',
+                          );
+
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.all(8.0),
+                              tileColor: Colors.grey[200],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              leading: course.media.isNotEmpty
+                                  ? Image.network(
+                                      course.media[0],
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : const Icon(Icons.book),
+                              title: Text(
+                                course.title,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18),
+                              ),
+                              subtitle: Text(
+                                'Duration: ${course.duration}',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              trailing: const Icon(Icons.arrow_forward_ios,
+                                  color: Colors.blue),
+                              onTap: () {
+                                // Navigate to UserCourseDetailScreen with the CourseModel instance
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        UserCourseDetailScreen(course: course),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return const Text("Error fetching courses");
+                    }
+
+                    return const Center(child: CircularProgressIndicator());
+                  },
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
